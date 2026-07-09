@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript for/in 语句循环遍历对象的属性</title>
+</head>
+<body>
+    <h1>JavaScript for相关语句</h1>
+    <h2>For In 循环</h2>
+    <p>JavaScript for in 语句循环遍历对象的属性：</p>
+    <h3>语法</h3>
+    <pre>for (key in object) {
+    // code block to be executed
+}  </pre>
+    <h3>实例</h3>
+    <pre>const person = {fname:"Bill", lname:"Gates", age:25};
+let text = "";
+for (let x in person) {
+    text += person[x];
+}  </pre>
+    <p><a target="_blank" href="https://www.w3school.com.cn/tiy/t.asp?f=js_object_for_in">亲自试一试</a></p>
+    <h3>例子解释</h3>
+    <ul>
+        <li><em>for in</em> 循环遍历 <em>person</em> 对象</li>
+        <li>每次迭代返回一个<em>键</em> (x)</li>
+        <li>键用于访问键的<em>值</em></li>
+        <li>键的值为 <em>person[x]</em></li>
+    </ul>
+    <h2>For In 遍历数组</h2>
+    <p>JavaScript for in 语句也可以遍历数组的属性：</p>
+    <h3>语法</h3>
+    <pre>for (variable in array) {    code  }  </pre>
+    <h3>实例</h3>
+    <pre>const numbers = [45, 4, 9, 16, 25];
+let txt = "";
+for (let x in numbers) {
+	txt += numbers[x];
+}  </pre>
+    <p><a target="_blank" href="https://www.w3school.com.cn/tiy/t.asp?f=js_array_for_in">亲自试一试</a></p>
+    <p>如果索引<em>顺序</em>很重要，请不要在数组上使用 <em>for in</em>。</p>
+    <p>索引顺序依赖于实现，可能不会按照您期望的顺序访问数组值。</p>
+    <p>当顺序很重要时，最好使用 <em>for</em> 循环、<em>for of</em> 循环或 <em>Array.forEach()</em>。</p>
+    <h2>Array.forEach()</h2>
+    <p>forEach() 方法为每个数组元素调用一次函数（回调函数）。</p>
+    <h3>实例</h3>
+    <pre>const numbers = [45, 4, 9, 16, 25];
+let txt = "";
+numbers.forEach(myFunction);
+function myFunction(value, index, array) {
+	txt += value;
+}  </pre>
+    <p><a target="_blank" href="https://www.w3school.com.cn/tiy/t.asp?f=js_array_foreach_1">亲自试一试</a></p>
+    <p>请注意，该函数采用 3 个参数：</p>
+    <ul>
+        <li>项目值</li>
+        <li>项目索引</li>
+        <li>数组本身</li>
+    </ul>
+    <p>上面的例子仅使用 value 参数。可以改写为：</p>
+    <h3>实例</h3>
+    <pre>const numbers = [45, 4, 9, 16, 25];
+let txt = "";
+numbers.forEach(myFunction);
+function myFunction(value) {
+    txt += value;
+}  </pre>
+    <p><hr>
+<p>点击下面的按钮，循环遍历对象 "person" 的属性。</p>
+<button onclick="myFunction()">点击这里</button>
+<p id="demo"></p>
+<script>
+    const cars = ["BMW", "Volvo", "Mini"];
+    let theText = "";
+    for (let x of cars) {
+        theText += x + "<br>";
+    }
+    document.getElementById("demo").innerHTML = theText;
+
+    function myFunction() {
+        var person = {fname: "Bill", lname: "Gates", age: 56};
+        var x;
+        var txt = "";
+        for (x in person) {
+            txt = txt + person[x];
+        }
+        document.getElementById("demo").innerHTML = txt;
+    }
+</script>
+
+<p>for in 语句也可以遍历数组值：</p>
+<p id="demo2"></p>
+<script>
+    const numbers = [45, 4, 9, 16, 25];
+    let txt = "";
+    for (let x in numbers) {
+        txt += numbers[x] + "<br>";
+    }
+    document.getElementById("demo2").innerHTML = txt;
+</script>
+<div>
+    <p>如果索引<em>顺序</em>很重要，请不要在数组上使用<em>for in</em>。</p>
+    <p>索引顺序依赖于实现，可能不会按照您期望的顺序访问数组值。</p>
+    <p>当顺序很重要时，最好使用<em>for</em>循环、<em>for of</em>循环或<em>Array.forEach()</em>。</p>
+</div>
+Array.forEach()
+forEach() 方法为每个数组元素调用一次函数（回调函数）。
+
+实例
+<pre>
+const numbers = [45, 4, 9, 16, 25];
+let txt = "";
+numbers.forEach(myFunction);
+function myFunction(value, index, array) {
+    txt += value;
+}
+</pre>
+<p>注意，该函数采用 3 个参数：</p>
+<ul>
+    <li>项目值</li>
+    <li>项目索引</li>
+    <li>数组本身</li>
+</ul>
+<p>上面的例子仅使用 value 参数。可以改写为：</p>
+<h3>实例</h3>
+<pre>const numbers = [45, 4, 9, 16, 25];
+let txt = "";
+numbers.forEach(myFunction);
+function myFunction(value) {
+    txt += value;
+}</pre>
+
+https://www.runoob.com/js/js-loop-for.html<br>
+https://www.runoob.com/try/try.php?filename=tryjs_object_for_in<br>
+https://www.w3school.com.cn/js/js_loop_for.asp <br>
+https://www.w3school.com.cn/js/js_loop_forin.asp
+<br>
+<h2>For Of 循环</h2>
+<p>JavaScript for of语句循环遍历可迭代对象的值。</p>
+<p>它允许您循环遍历可迭代的数据结构，例如数组、字符串、映射、节点列表等：</p>
+<h3>语法</h3>
+<pre>for (<em>variable</em> of <em>iterable</em>) {
+    // code block to be executed
+}  </pre>
+<p><em>variable</em>- 对于每次迭代，下一个属性的值都会分配给变量。变量可以用 const、let 或 var 声明。</p>
+<p><em>iterable</em>- 具有可迭代属性的对象。</p>
+<h2>浏览器支持</h2>
+<p><em>For/of</em>在 2015 年被添加到 JavaScript (ES6)</p>
+<p>Safari 7 是第一个支持for of的浏览器：</p>
+<table>
+    <tbody>
+    <tr>
+        <th>Chrome</th>
+        <th>IE</th>
+        <th>Firefox</th>
+        <th>Safari</th>
+        <th>Opera</th>
+    </tr>
+    <tr>
+        <td>Chrome 38</td>
+        <td>Edge 12</td>
+        <td>Firefox 51</td>
+        <td>Safari 7</td>
+        <td>Opera 25</td>
+    </tr>
+    <tr>
+        <td>2014 年 10 月</td>
+        <td>2015 年 7 月</td>
+        <td>2016 年 10 月</td>
+        <td>2013 年 10 月</td>
+        <td>2014 年 10 月</td>
+    </tr>
+    </tbody>
+</table>
+<p>Internet Explorer 不支持<em>For/of</em>。</p>
+<h2>遍历数组</h2>
+<h3>实例</h3>
+<pre>const cars = ["BMW", "Volvo", "Mini"];
+let text = "";
+for (let x of cars) {
+	text += x;
+}
+</pre>
+<h2>遍历字符串</h2>
+<h3>实例</h3>
+<pre>let language = "JavaScript";
+let text = "";
+for (let x of language) {
+	text += x;
+}
+</pre>
+</body>
+</html>

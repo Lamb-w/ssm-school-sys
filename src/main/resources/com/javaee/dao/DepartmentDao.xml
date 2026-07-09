@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaee.dao.DepartmentDao">
+	<select id="findDepartmentById" parameterType="int" resultType="department">
+		select * from Department where id = #{id}
+	</select>
+	<select id="findDepartments"  resultType="department">
+		select * from Department 
+	</select>
+	<select id="findDepartmentsWithMajorCount"  resultMap="departmentWithMajorCountMap">
+		select D.*, count(M.id) majorCount from Major M right join Department D on D.id=M.departmentId group by D.id; 
+	</select>
+	<resultMap type="departmentWithMajorCountVO" id="departmentWithMajorCountMap">
+		<id column="id" property="department.id"/>
+		<result column="name" property="department.name"/>
+		<result column="memo" property="department.memo"/>		
+		<result column="majorCount" property="majorCount"/>
+	</resultMap>	
+	<insert id="insertDepartment" parameterType="department">
+		insert into Department(name, memo) values(#{name}, #{memo})
+	</insert>	
+	<update id="updateDepartment" parameterType="department">
+		update Department
+		set name=#{name}, memo=#{memo}
+		where id = #{id}
+	</update>
+	<delete id="deleteDepartment" parameterType="int">
+		delete from Department where id = #{id}
+	</delete>	
+</mapper>

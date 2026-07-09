@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <context:component-scan base-package="com.javaee.controller"/>
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <bean name="converterService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="com.javaee.converter.DateConverter"/> <!--针对java.util.Date型-->
+                <bean class="com.javaee.converter.SQLDateConverter"/> <!--针对java.sql.Date型-->
+            </set>
+        </property>
+    </bean>
+    <mvc:annotation-driven conversion-service="converterService"/>
+    <mvc:default-servlet-handler />
+    <!-- 配置文件上传多部件解析器MultipartResolver -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> <!-- 该bean的id不能改成别的 -->
+        <!-- 设置请求编码格式 要与jsp页中的pageEncoding的值一致 -->
+        <property name="defaultEncoding" value="UTF-8" />
+        <!-- 设置允许上传的文件总大小最大值(以字节位单位) -->
+        <property name="maxUploadSize" value="10485760"></property> <!-- 此处设为10MB 10*1024*1024 -->
+        <!-- 否则会提示：the request was rejected because its size (24014185) exceeds the configured maximum (10485760) -->
+        <!--<property name="resolveLazily" value="true" /> 实际并没什么用 -->
+    </bean>
+    <mvc:interceptors>
+        <!--<bean class="com.javaee.interceptor.GolbalInterceptor"/>-->
+        <mvc:interceptor>
+            <mvc:mapping path="/admin/**"/> <!-- 若本项目还有模块未完成（需要调试），可以故意设不存在的拦截地址，避免被拦截而拖慢该模块的调试进度。待完工后再恢复正常链接监听即可。 -->
+            <mvc:mapping path="/student/**"/>
+            <bean class="com.javaee.interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+</beans>

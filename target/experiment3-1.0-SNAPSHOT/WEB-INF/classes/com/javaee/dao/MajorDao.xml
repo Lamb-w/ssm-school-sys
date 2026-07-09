@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaee.dao.MajorDao">
+	<select id="findMajorById" parameterType="int" resultType="major">
+		select * from Major where id = #{id}
+	</select>
+	<select id="findMajors"  resultMap="majorDepartment">
+		select M.*, D.name as departmentName from Major M, Department D where M.departmentId = D.id 
+	</select>	
+	<select id="findMajorsByDepartmentId" parameterType="int"  resultType="major">
+		select * from Major where departmentId = #{id} 
+	</select>
+	<resultMap type="major" id="majorDepartment">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<association property="department" javaType="department">
+			<id property="id" column="departmentId"/>
+			<result property="name" column="departmentName"/>
+		</association>
+	</resultMap>
+	<insert id="insertMajor" parameterType="major">
+		insert into Major(name, departmentId) values(#{name}, #{department.id}) 
+	</insert>	
+	<update id="updateMajor" parameterType="major">
+		update Major
+		set name=#{name}, departmentId=#{department.id}
+		where id = #{id}
+	</update>
+	<delete id="deleteMajor" parameterType="int">
+		delete from Major where id = #{id}
+	</delete>	
+</mapper>

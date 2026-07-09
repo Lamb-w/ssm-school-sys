@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaee.dao.AdministratorDao">
+	<select id="findAdministratorById" parameterType="int" resultType="administrator">
+		select * from Administrator where id = #{id}
+	</select>
+	<select id="findAdministratorByLogin" parameterType="loginVO"  resultType="administrator">
+		select * from Administrator 
+		where adminName=#{loginName} and adminPwd=#{loginPwd}
+	</select>	
+	<update id="updateAdminPwd" parameterType="changePwdVO"> <!-- 修改管理员密码 用的策略是：通过提交传入组合的账号、密码两个字段(并不是主键id)去修改。 -->
+		update Administrator
+		set adminPwd=#{userPwdNew}
+		where adminName=#{userName} and adminPwd=#{userPwd}
+	</update>	
+</mapper>
+<!--
+记住：对于update操作，返回的是受影响的记录条数(说法在字面上和insert、delete一样)。并不是说这些记录都的确和update之前有不同，只要匹配了，都算是受到了影响。
+ -->

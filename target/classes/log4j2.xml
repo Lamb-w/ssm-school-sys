@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <properties>
+        <property name="LOG_HOME">${sys:catalina.home}/logs</property>
+        <property name="APP_NAME">experiment3</property>
+    </properties>
+    <!--先定义所有的appender-->
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{3} %msg%n"/> <!--%logger{x} 数字x是测试方法为起点（值为1）至类、包所在路径的最大层次数，超过顶层包时，则到此为止。-->
+        </Console>
+        <RollingFile name="SqlLog" fileName="${LOG_HOME}/${APP_NAME}/sql.log" filePattern="${LOG_HOME}/${APP_NAME}/sql-%d{yyyy-MM-dd}.log.gz"> <!--存储日志的文件位置默认是tomcat/bin起点。-->
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%p] %logger{15} %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效-->
+    <Loggers>
+        <!-- MyBatis SQL日志配置  Logger的name属性是实际Mapper接口所在包的路径-->
+        <Logger name="com.javaee.dao" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="SqlLog"/>
+        </Logger>
+
+        <!--根Logger配置 正式环境下改为info级别-->
+        <root level="info">
+            <!--Info输出到文件-->
+            <appender-ref ref="RollingFileInfo"/>
+            <!--Warn输出到文件-->
+            <appender-ref ref="RollingFileWarn"/>
+            <!--Error输出到文件-->
+            <appender-ref ref="RollingFileError"/>
+            <!--sql输出到文件-->
+            <!--<appender-ref ref="SqlLog"/>-->
+
+            <!--正式环境下面两项删除（因为没必要输出到控制台）-->
+            <!--输出到控制台-->
+            <appender-ref ref="Console"/>
+        </root>
+    </Loggers>
+</Configuration>

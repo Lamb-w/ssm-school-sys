@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaee.dao.IdCardDao">
+	<!--根据id查询证件信息 -->
+	<select id="findIdCardById" parameterType="int" resultType="idCard">
+		select * from IdCard where id = #{id}
+	</select>
+	<select id="getSameCount" parameterType="fieldExistValidVO" resultType="int">
+		select count(*) from IdCard where cardNo=#{fieldValue}
+	</select>	
+	<select id="getOtherSameCount" parameterType="fieldExistValidVO" resultType="int">
+		select count(*) from IdCard where id !=#{id} and cardNo=#{fieldValue}
+	</select>		
+	<insert id="insertIdCard" parameterType="idCard" keyProperty="id" useGeneratedKeys="true"> <!-- 添加完成后把主键id的值赋给参数idCard.id -->
+		insert into IdCard(cardNo, issuingAuthority, expireDateStart, expireDateEnd)
+		values(#{cardNo}, #{issuingAuthority}, #{expireDateStart}, #{expireDateEnd})
+	</insert>
+	<!-- 在做添加学生 这个功能时，应先添加idCard 返回了自带已刚刚填充入的id值 -->
+	<delete id="deleteIdCard" parameterType="int">
+		delete from IdCard where id=#{id}
+	</delete>
+	<update id="updateIdCard" parameterType="idCard">
+		update IdCard
+		set cardNo=#{cardNo},
+			issuingAuthority=#{issuingAuthority},
+			expireDateStart=#{expireDateStart}, expireDateEnd=#{expireDateEnd}
+		where id=#{id}
+	</update>
+</mapper>

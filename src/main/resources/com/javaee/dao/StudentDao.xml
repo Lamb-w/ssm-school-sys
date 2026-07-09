@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaee.dao.StudentDao">
+	<!-- 登录 -->
+	<select id="findStudentByLogin" parameterType="loginVO"  resultType="student">
+		select * from Student
+			@Autowired
+	</select>
+	<select id="getTotalOfStudents">
+		select count(id) from student;
+	</select>
+	<!--根据id查询学生信息 -->
+	<select id="findStudentById" parameterType="int" resultMap="studentInfoMap">
+		select S.*, D.name departmentName, M.name majorName, C.*
+		from Student S, Department D, Major M, IdCard C
+		where did=D.id and mid=M.id and idCardId = C.id and S.id = #{id}
+	</select>
+    <!-- 下面是带查询条件的分页查询  点击查询后将查询条件封装在Map型参数中，其内的成员属性student又含了大部分查询条件，再将它和页号、页大小封装在map里。-->
+    <select id="findStudentsByConditionPage" parameterType="map" resultMap="studentInfoMap">
+		select S.*, D.name departmentName, M.name majorName, C.*
+		from Student S, Department D, Major M, IdCard C
+		<where>
+			did=D.id and mid=M.id and idCardId = C.id
+			<if test="student != null">
+				<if test="student.sNo !=null and student.sNo!=''">  <!-- 且：不能写成&& -->
+					and sNo like concat('%', #{student.sNo}, '%')
+				</if>
+				<if test="student.name !=null and student.name!=''"> <!-- 除第一个开头的and可省，下面的and不应省略。 -->
+					and S.name like concat('%', #{student.name}, '%')
+				</if>	
+				<if test="student.gender !=null and student.gender!='-1'">
+					and gender=#{student.gender}
+				</if>
+				<if test="student.department.id !=null and student.department.id!=-1">
+					and did=#{student.department.id}
+				</if>
+				<if test="student.major.id !=null and student.major.id!=-1">
+					and mid=#{student.major.id}
+				</if>					
+				<if test="student.contactPhone !=null and student.contactPhone!=''">
+					and contactPhone  like concat('%', #{student.contactPhone}, '%')
+				</if>
+				<if test="student.idCard.cardNo !=null and student.idCard.cardNo!=''">
+					and cardNo like concat('%', #{student.idCard.cardNo}, '%')
+				</if>				
+			</if>							
+		</where>        
+        <if test="start!=null and size!=null">
+            limit #{start}, #{size}
+        </if>
+    </select>
+    <select id="getStudentsCountByConditionPage" parameterType="map" resultType="int">
+    	select count(*)
+    	from Student S, Department D, Major M, IdCard C
+		<where>
+			did=D.id and mid=M.id and idCardId = C.id
+			<if test="student != null">
+				<if test="student.sNo !=null and student.sNo!=''">  <!-- 且：不能写成&& -->
+					and sNo like concat('%', #{student.sNo}, '%')
+				</if>
+				<if test="student.name !=null and student.name!=''"> <!-- 除第一个开头的and可省，下面的and不应省略。 -->
+					and S.name like concat('%', #{student.name}, '%')
+				</if>	
+				<if test="student.gender !=null and student.gender!='-1'">
+					and gender=#{student.gender}
+				</if>
+				<if test="student.department.id !=null and student.department.id!=-1">
+					and did=#{student.department.id}
+				</if>
+				<if test="student.major.id !=null and student.major.id!=-1">
+					and mid=#{student.major.id}
+				</if>					
+				<if test="student.contactPhone !=null and student.contactPhone!=''">
+					and contactPhone  like concat('%', #{student.contactPhone}, '%')
+				</if>
+				<if test="student.idCard.cardNo !=null and student.idCard.cardNo!=''">
+					and cardNo like concat('%', #{student.idCard.cardNo}, '%')
+				</if>				
+			</if>							
+		</where> 
+    </select>
+	<!-- 对于具有unique属性的字段，用ajax实施重复性检验 -->
+	<select id="getSameCount" parameterType="fieldExistValidVO" resultType="int">
+		select count(*) from Student
+		<where>
+			<choose> <!-- 类似Java中的switch case default -->
+				<when test='"1" == fieldType'>  <!--fieldType对应值是串型 '1' == fieldType  写成这样是不行的-->
+					sNo=#{fieldValue}
+				</when>
+				<when test='"2" == fieldType'> 
+					contactPhone=#{fieldValue}
+				</when>	
+				<otherwise> <!-- 能执行到这说明，前面的when都不满足 -->
+					
+				</otherwise>		
+			</choose>	
+		</where>
+	</select>	
+	<select id="getOtherSameCount" parameterType="fieldExistValidVO" resultType="int">
+		select count(*) from Student
+		<where>
+			<if test="id != null and id != ''">and id != #{id}</if>
+			<choose>
+				<when test='"2" == fieldType'>
+					contactPhone=#{fieldValue}
+				</when>	
+				<otherwise> <!-- 能执行到这说明，前面的when都不满足 -->
+					
+				</otherwise>		
+			</choose>	
+		</where>
+	</select>	
+	<resultMap type="student" id="studentInfoMap">
+		<id property="id" column="id"/>
+		<result property="sNo" column="sNo"/>
+		<result property="sPwd" column="sPwd"/>
+		<result property="name" column="name"/>
+		<result property="gender" column="gender"/>	
+		<result property="contactPhone" column="contactPhone"/>	<!-- association、collection都要放在id、result标签之后。 -->
+		<result property="image" column="image"/>
+		<result property="memo" column="memo"/>
+		<association property="department" javaType="department">
+			<id property="id" column="did"/>
+			<result property="name" column="departmentName"/>
+		</association>
+		<association property="major" javaType="major">
+			<id  property="id" column="mid"/>
+			<result property="name" column="majorName"/>
+		</association>
+		<association property="idCard" javaType="idCard">
+			<id  property="id" column="idCardId"/>
+			<result property="cardNo" column="cardNo"/>
+			<result property="issuingAuthority" column="issuingAuthority"/>
+			<result property="expireDateStart" column="expireDateStart"/>
+			<result property="expireDateEnd" column="expireDateEnd"/>			
+		</association>		
+	</resultMap>		
+	<insert id="insertStudent" parameterType="student"> <!-- 增加学生的密码字段(初始值默认是证件号码的后六位) -->
+		insert into Student(sNo, sPwd, name, gender, did, mid, contactPhone, idCardId, image, memo)
+		values(#{sNo}, #{sPwd}, #{name}, #{gender}, #{department.id}, #{major.id}, #{contactPhone}, #{idCard.id}, #{image}, #{memo})
+	</insert>
+	<delete id="deleteStudent" parameterType="int">
+		delete from Student where id=#{id}
+	</delete>
+	<update id="updateStudent" parameterType="student">  <!-- password=#{password},  -->
+		update Student
+		set sPwd=#{sPwd}, name=#{name}, gender=#{gender}, did=#{department.id}, mid=#{major.id}, contactPhone=#{contactPhone}, idCardId=#{idCard.id}, image=#{image}, memo=#{memo}
+		where id=#{id}
+	</update>
+	<update id="updateStudentPwd" parameterType="changePwdVO"> <!-- 修改管理员密码 用的策略是：通过提交传入组合的账号、密码两个字段(并不是主键id)去修改。 -->
+		update Student
+		set sPwd=#{userPwdNew}
+		where sNo=#{userName} and sPwd=#{userPwd}
+	</update>
+	<!-- 学生角色 -->
+	
+</mapper>
